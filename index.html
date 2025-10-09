@@ -676,6 +676,36 @@
         clearInterval(particleInterval);
       });
     });
+    async function startTest() {
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROBANDO...';
+  document.getElementById('detailedStatus').innerText = 'Ejecutando prueba...';
+
+  try {
+    const res = await fetch('/api/test');
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error);
+
+    const dl = (data.download / 1e6).toFixed(2);
+    const ul = (data.upload / 1e6).toFixed(2);
+    const ping = data.ping.toFixed(1);
+
+    document.getElementById('dlSpeed').innerText = dl;
+    document.getElementById('ulSpeed').innerText = ul;
+    document.getElementById('pingText').innerText = ping;
+    document.getElementById('avgSpeed').innerText = ((+dl + +ul)/2).toFixed(2);
+    document.getElementById('detailedStatus').innerText = '✅ Prueba completada';
+
+  } catch (e) {
+    document.getElementById('detailedStatus').innerText = 'Error en la prueba';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-sync-alt"></i> REPETIR PRUEBA';
+  }
+}
+
   </script>
 </body>
 </html>
